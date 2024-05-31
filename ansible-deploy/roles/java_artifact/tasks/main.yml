@@ -1,0 +1,32 @@
+---
+- name: Ensure the web server is installed
+  ansible.builtin.yum:
+    name: httpd
+    state: present
+  become: yes
+
+- name: Start and enable the web server
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Download the Java artifact from Nexus
+  ansible.builtin.get_url:
+    url: "http://172.31.10.58:8081/repository/backdrop/"
+    dest: /var/www/html/vprofile-v2.war
+    mode: '0644'
+  become: yes
+
+- name: Verify the artifact is present
+  ansible.builtin.stat:
+    path: /var/www/html/vprofile-v2.war
+  register: artifact_stat
+
+- name: Restart the web server if the artifact has changed
+  ansible.builtin.service:
+    name: httpd
+    state: restarted
+  when: artifact_stat.stat.exists
+  become: yes

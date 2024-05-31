@@ -1,0 +1,8 @@
+---
+- name: Deploy Java artifact from Nexus to Web Server
+  hosts: webservers
+  roles:
+    - java_artifact
+  # vars:
+  #   nexus_url: "http://172.31.10.58:8081/repository/backdrop/"
+  #   artifact_name: "vprofile-v2.war"
